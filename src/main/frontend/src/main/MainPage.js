@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {Button, Link} from "@mui/material";
-
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 function MainPage() {
     const instance = axios.create({
         baseURL: 'http://localhost:8080'
@@ -23,7 +29,11 @@ function MainPage() {
             .catch(error => console.log(error));
         instance.get('/api/board')
             .then(response => {
-                setData(response.data);
+                setData(response.data.map(post => ({
+                    ...post,
+                    // 작성일 포맷 변경
+                    date: new Date(post.date).toISOString().split('T')[0]
+                })));
             })
             .catch(error => console.log("실패"));
     }, []);
@@ -45,29 +55,36 @@ function MainPage() {
                     새글작성
                 </Button>
             </div>
-            <div>
-                <h2>게시글 리스트</h2>
-                <table>
-                    <thead>
-                    <tr>
-                        <th>NO</th>
-                        <th>제목</th>
-                        <th>작성자</th>
-                        <th>조회수</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {data.map(post => (
-                        <tr key={post.id} onClick={() => handlePostClick(post.id)} style={{fontWeight: selectedPost === post.id ? 'bold' : 'normal'}}>
-                            <td>{post.id}</td>
-                            <td>{post.title}</td>
-                            <td>{post.writer}</td>
-                            <td>{post.watcher}</td>
-                        </tr>
-                    ))}
-                    </tbody>
-                </table>
-            </div>
+            <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>NO</TableCell>
+                            <TableCell sx={{width:600}} align="left">제목</TableCell>
+                            <TableCell align="left">작성자</TableCell>
+                            <TableCell align="left">작성일</TableCell>
+                            <TableCell align="right">조회수</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {data.map((row) => (
+                            <TableRow
+                                key={row.id}
+                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                onClick={() => handlePostClick(row.id)} style={{fontWeight: selectedPost === row.id ? 'bold' : 'normal'}}
+                            >
+                                <TableCell component="th" scope="row">
+                                    {row.id}
+                                </TableCell>
+                                <TableCell align="left">{row.title}</TableCell>
+                                <TableCell align="left">{row.writer}</TableCell>
+                                <TableCell align="left">{row.date}</TableCell>
+                                <TableCell align="right">{row.watcher}</TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
         </div>
     );
 }
