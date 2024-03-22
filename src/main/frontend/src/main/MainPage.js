@@ -10,7 +10,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 function MainPage() {
     const instance = axios.create({
-        baseURL: 'http://localhost:8080'
+        baseURL: 'http://ec2-52-79-215-156.ap-northeast-2.compute.amazonaws.com:8080/'
     });
     const [hello, setHello] = useState('');
     const [data, setData] = useState([]);
