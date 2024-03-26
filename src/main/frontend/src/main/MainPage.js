@@ -24,10 +24,10 @@ function MainPage() {
     ];
 
     useEffect(() => {
-        instance.get('/api/hello')
+        axios.get('/api/hello')
             .then(response => setHello(response.data))
             .catch(error => console.log(error));
-        instance.get('/api/board')
+        axios.get('/api/board')
             .then(response => {
                 setData(response.data.map(post => ({
                     ...post,
